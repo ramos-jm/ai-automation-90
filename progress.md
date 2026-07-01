@@ -4,3 +4,9 @@ WHERE I AM TODAY (Day 1)
 3. Gap 2 (agent frameworks)   — current level /5: __  Note: ______
 4. Gap 3 (RAG + vector DBs)    — current level /5: __  Note: ______
 5. Gap 4 (selling automation)  — current level /5: __  Note: ______
+
+# PROGRESS — ai-automation-90
+
+## Day 1
+- Built: repo scaffold, env, hello_llm.py
+- Broke/learned: Basic API for LLM
