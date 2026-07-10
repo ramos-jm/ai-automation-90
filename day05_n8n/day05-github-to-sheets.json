@@ -1,0 +1,199 @@
+{
+  "name": "day05-github-to-sheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "356e8cbb-4ea7-4c6f-b0f3-e3bc8cf2700d",
+      "name": "Manual"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/n8n-io/n8n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3a764ce6-4312-45a5-8286-5f9de40820fd",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19nSQYGBCCgrJzf9y_A0aAezLTaPZCThCqBU2ws7lowo",
+          "mode": "list",
+          "cachedResultName": "n8n-day05",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19nSQYGBCCgrJzf9y_A0aAezLTaPZCThCqBU2ws7lowo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19nSQYGBCCgrJzf9y_A0aAezLTaPZCThCqBU2ws7lowo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "stargazers_count": "={{ $json.stargazers_count }}",
+            "updated_at": "={{ $json.updated_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "stargazers_count",
+              "displayName": "stargazers_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        0
+      ],
+      "id": "647af4cf-e906-422a-a5ce-b655d38780f8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "601cbf9f-79b2-46b7-8afb-87c4857df5f3",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "94effe35-a424-435c-9fcb-008ddee87ffc",
+              "name": "stargazers_count",
+              "value": "={{ $json.stargazers_count }}",
+              "type": "number"
+            },
+            {
+              "id": "858aa521-bf71-4b78-bb24-9f180b2c3847",
+              "name": "updated_at",
+              "value": "={{ $json.updated_at }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        0
+      ],
+      "id": "cd522785-f3e9-40ef-8347-fdeb28e24549",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f11aabc8-05f6-4fec-a51b-e56017cfd7fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e904d1734ebbf993bd808e0e0345a75a5fca630950f5c4a6c27501a0190e5a51"
+  },
+  "nodeGroups": [],
+  "id": "vD1h9CRixgYL5ZCK",
+  "tags": []
+}
