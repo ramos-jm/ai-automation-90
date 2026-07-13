@@ -1,0 +1,393 @@
+{
+  "name": "day08-summarize-resilient",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a7962df-c340-4809-8e64-f9dbe080ed46",
+              "name": "summary",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "d81eecb2-d985-4ae0-8407-13fcdb325b87",
+              "name": "input_preview",
+              "value": "={{ $('Story Writer').item.json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        0
+      ],
+      "id": "8e6a12c0-11f2-467a-9542-fe18d7cca545",
+      "name": "Manual Mapping"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18rfgODL6DnChLge6aAWOKJRn1XH-CWs_1v1HAqIEqYY",
+          "mode": "list",
+          "cachedResultName": "n8n-day06",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18rfgODL6DnChLge6aAWOKJRn1XH-CWs_1v1HAqIEqYY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18rfgODL6DnChLge6aAWOKJRn1XH-CWs_1v1HAqIEqYY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "summary": "={{ $json.summary }}",
+            "input_preview": "={{ $json.input_preview }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "input_preview",
+              "displayName": "input_preview",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        0
+      ],
+      "id": "7a635369-0655-4063-b5a7-02d078000392",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"Write me a 500-word essay about anything\" }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        32,
+        0
+      ],
+      "id": "e6258270-c1a8-4e30-b556-552560d898eb",
+      "name": "Story Writer",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PjeGuEJYS6iBXYeN",
+          "name": "n8n Academy API Key"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    { \n      \"role\": \"user\", \n      \"content\": {{ JSON.stringify(\"Summarize in exactly 5 bullets:\\n\\n\" + $json.choices[0].message.content) }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        0
+      ],
+      "id": "d7608b16-04f3-48d0-9389-c9751f363bfc",
+      "name": "Story Summarizer",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yEuFXlUwRpvJl9V3",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        0
+      ],
+      "id": "cb4825c9-1af0-4a3d-84ef-d8d555ccadea",
+      "name": "ManualTrigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1105d777-00f0-4a01-a6c1-ebb7ea128ea9",
+              "name": "alert",
+              "value": "='Day6 workflow failed: {{ $json.error.message || 'unknown error' }}",
+              "type": "string"
+            },
+            {
+              "id": "76b8defd-5ed7-4d3a-b135-16307b828fd9",
+              "name": "failed_at",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        144
+      ],
+      "id": "d9334df3-4fe4-44c8-907c-e4561b446215",
+      "name": "Build Alert"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a7962df-c340-4809-8e64-f9dbe080ed46",
+              "name": "error_message",
+              "value": "={{ \n  (() => {\n    try {\n      // 1. Clean up the heavily escaped backslashes so it becomes valid JSON text\n      const cleanString = $json.alert\n        .replace(/\\\\\"/g, '\"')     // Fixes \\\" -> \"\n        .replace(/\\\\\\\\\"/g, '\"');   // Fixes \\\\\" -> \"\n\n      // 2. Find the clear {\"error\":...} block\n      const jsonMatch = cleanString.match(/\\{\"error\".+\\}/);\n      if (!jsonMatch) return `Automation Failed !!\\n\\n${$json.alert}`;\n\n      // 3. Convert it into a real JavaScript Object\n      const errorObj = JSON.parse(jsonMatch[0]);\n\n      // 4. Extract and format the properties perfectly\n      return `Automation Failed !!\n\nmessage: ${errorObj.error.message}\ntype: ${errorObj.error.type.replace(/_/g, ' ')}\ncode: ${errorObj.error.code}`;\n\n    } catch (e) {\n      return `Automation Failed !! (Parsing Error)\\n\\n${$json.alert}`;\n    }\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "d81eecb2-d985-4ae0-8407-13fcdb325b87",
+              "name": "date&time",
+              "value": "={{ $json.failed_at }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        144
+      ],
+      "id": "888f334d-e6e1-4a68-b582-e536e1e73bcc",
+      "name": "Manual Mapping1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1np92wBi3BZ87ZrGutXRTjA5CbXyqnjzB_kLB95hTzsA",
+          "mode": "list",
+          "cachedResultName": "n8n-day 8-error handling",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1np92wBi3BZ87ZrGutXRTjA5CbXyqnjzB_kLB95hTzsA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1np92wBi3BZ87ZrGutXRTjA5CbXyqnjzB_kLB95hTzsA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "error_message": "={{ $json.error_message }}",
+            "date&time": "={{ $json['date&time'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date&time",
+              "displayName": "date&time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        144
+      ],
+      "id": "b1b44fb4-a9fb-4275-8ff8-68dd12fc2b98",
+      "name": "Error Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Mapping": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Story Writer": {
+      "main": [
+        [
+          {
+            "node": "Story Summarizer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Story Summarizer": {
+      "main": [
+        [
+          {
+            "node": "Manual Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ManualTrigger": {
+      "main": [
+        [
+          {
+            "node": "Story Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Alert": {
+      "main": [
+        [
+          {
+            "node": "Manual Mapping1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Mapping1": {
+      "main": [
+        [
+          {
+            "node": "Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b55e530b-c469-4dc6-aa8d-50f2c2d256fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e904d1734ebbf993bd808e0e0345a75a5fca630950f5c4a6c27501a0190e5a51"
+  },
+  "nodeGroups": [],
+  "id": "rdKj2rztOPwwvv7u",
+  "tags": []
+}
