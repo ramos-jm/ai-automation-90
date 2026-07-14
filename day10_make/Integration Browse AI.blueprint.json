@@ -1,0 +1,1572 @@
+{
+    "name": "Integration Browse AI",
+    "flow": [
+        {
+            "id": 2,
+            "module": "browse-ai:onTaskFinished",
+            "version": 1,
+            "parameters": {
+                "__IMTHOOK__": 3389703
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTHOOK__": {
+                            "label": "My Watch Tasks webhook",
+                            "data": {
+                                "editable": "false"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTHOOK__",
+                        "type": "hook:browse-ai",
+                        "label": "Webhook",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 8976400
+            },
+            "mapper": {
+                "from": "drive",
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING",
+                "spreadsheetId": "1eDnks3AX859RL0WbR4sHbrQ-OaOSKTZtiBuY6K2YTVU",
+                "sheetId": "Sheet1",
+                "includesHeaders": true,
+                "tableFirstRow": "A1:CZ1",
+                "filter": [
+                    [
+                        {
+                            "a": "J",
+                            "o": "text:equal",
+                            "b": "{{2.task.id}}"
+                        }
+                    ]
+                ],
+                "sortOrder": "asc"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "My Google connection (ramosjohnmichael61@gmail.com)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Tally Contact Form"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Sheet1"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-CZ"
+                        },
+                        "orderBy": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Ascending"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "label": "Total number of bundles",
+                        "type": "uinteger"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "label": "Bundle order position",
+                        "type": "uinteger"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "label": "Row number",
+                        "type": "number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "label": "Spreadsheet ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "label": "Sheet",
+                        "type": "text"
+                    },
+                    {
+                        "name": "0",
+                        "label": "Submitted at (A)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "1",
+                        "label": "First Name (B)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "2",
+                        "label": "Last Name (C)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "3",
+                        "label": "Email (D)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "4",
+                        "label": "Contact Number (E)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "5",
+                        "label": "Website Link (F)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "6",
+                        "label": "Inquiry (G)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "7",
+                        "label": "Preferred Date & Time (H)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "8",
+                        "label": "Event ID (I)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "9",
+                        "label": "Task ID (J)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "10",
+                        "label": "(K)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "11",
+                        "label": "(L)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "12",
+                        "label": "(M)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "13",
+                        "label": "(N)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "14",
+                        "label": "(O)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "15",
+                        "label": "(P)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "16",
+                        "label": "(Q)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "17",
+                        "label": "(R)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "18",
+                        "label": "(S)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "19",
+                        "label": "(T)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "20",
+                        "label": "(U)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "21",
+                        "label": "(V)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "22",
+                        "label": "(W)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "23",
+                        "label": "(X)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "24",
+                        "label": "(Y)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "25",
+                        "label": "(Z)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "26",
+                        "label": "(AA)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "27",
+                        "label": "(AB)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "28",
+                        "label": "(AC)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "29",
+                        "label": "(AD)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "30",
+                        "label": "(AE)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "31",
+                        "label": "(AF)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "32",
+                        "label": "(AG)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "33",
+                        "label": "(AH)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "34",
+                        "label": "(AI)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "35",
+                        "label": "(AJ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "36",
+                        "label": "(AK)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "37",
+                        "label": "(AL)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "38",
+                        "label": "(AM)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "39",
+                        "label": "(AN)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "40",
+                        "label": "(AO)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "41",
+                        "label": "(AP)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "42",
+                        "label": "(AQ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "43",
+                        "label": "(AR)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "44",
+                        "label": "(AS)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "45",
+                        "label": "(AT)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "46",
+                        "label": "(AU)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "47",
+                        "label": "(AV)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "48",
+                        "label": "(AW)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "49",
+                        "label": "(AX)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "50",
+                        "label": "(AY)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "51",
+                        "label": "(AZ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "52",
+                        "label": "(BA)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "53",
+                        "label": "(BB)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "54",
+                        "label": "(BC)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "55",
+                        "label": "(BD)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "56",
+                        "label": "(BE)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "57",
+                        "label": "(BF)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "58",
+                        "label": "(BG)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "59",
+                        "label": "(BH)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "60",
+                        "label": "(BI)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "61",
+                        "label": "(BJ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "62",
+                        "label": "(BK)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "63",
+                        "label": "(BL)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "64",
+                        "label": "(BM)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "65",
+                        "label": "(BN)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "66",
+                        "label": "(BO)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "67",
+                        "label": "(BP)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "68",
+                        "label": "(BQ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "69",
+                        "label": "(BR)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "70",
+                        "label": "(BS)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "71",
+                        "label": "(BT)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "72",
+                        "label": "(BU)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "73",
+                        "label": "(BV)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "74",
+                        "label": "(BW)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "75",
+                        "label": "(BX)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "76",
+                        "label": "(BY)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "77",
+                        "label": "(BZ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "78",
+                        "label": "(CA)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "79",
+                        "label": "(CB)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "80",
+                        "label": "(CC)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "81",
+                        "label": "(CD)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "82",
+                        "label": "(CE)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "83",
+                        "label": "(CF)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "84",
+                        "label": "(CG)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "85",
+                        "label": "(CH)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "86",
+                        "label": "(CI)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "87",
+                        "label": "(CJ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "88",
+                        "label": "(CK)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "89",
+                        "label": "(CL)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "90",
+                        "label": "(CM)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "91",
+                        "label": "(CN)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "92",
+                        "label": "(CO)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "93",
+                        "label": "(CP)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "94",
+                        "label": "(CQ)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "95",
+                        "label": "(CR)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "96",
+                        "label": "(CS)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "97",
+                        "label": "(CT)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "98",
+                        "label": "(CU)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "99",
+                        "label": "(CV)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "100",
+                        "label": "(CW)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "101",
+                        "label": "(CX)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "102",
+                        "label": "(CY)",
+                        "type": "text"
+                    },
+                    {
+                        "name": "103",
+                        "label": "(CZ)",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "ai-local-agent:RunLocalAIAgent",
+            "version": 0,
+            "parameters": {
+                "makeConnectionId": 8969048
+            },
+            "mapper": {
+                "defaultModel": "medium",
+                "systemPrompt": "# EMAIL FORMAT AND WRITING STYLE\r\n\r\nThe email should follow the same structure and tone as a personal freelance designer replying directly to a potential client.\r\n\r\nThe goal is to make the client feel:\r\n- Their message was personally read\r\n- Their business/project was understood\r\n- They are speaking with a real designer, not an automated system\r\n\r\n\r\n# EMAIL STRUCTURE\r\n\r\nAlways follow this format:\r\n\r\n\r\nGREETING\r\n\r\nStart exactly with:\r\n\r\nHi [First Name],\r\n\r\n\r\n---\r\n\r\nOPENING PARAGRAPH\r\n\r\nPurpose:\r\nThank them and acknowledge their inquiry.\r\n\r\nRequirements:\r\n- Mention what they reached out about.\r\n- Reference something specific from their message.\r\n- If they shared a website, portfolio, or business link, naturally acknowledge it.\r\n- Keep the tone conversational.\r\n\r\nExamples of style:\r\n\r\n\"Thanks for reaching out and for sharing your website.\"\r\n\r\n\"Thanks for getting in touch about your project. I took a look at your current site and would love to learn more about what you're building.\"\r\n\r\n\r\nDo not use generic openings like:\r\n\r\n\"I hope this email finds you well.\"\r\n\"I hope you're having a great day.\"\r\n\r\n\r\n---\r\n\r\nPERSONALIZED CONNECTION PARAGRAPH\r\n\r\nPurpose:\r\nShow genuine interest.\r\n\r\nRequirements:\r\n- Mention 1-2 specific details from their website or message.\r\n- Connect those details to how you can help.\r\n- Sound like someone who actually reviewed their business.\r\n\r\nExamples:\r\n\r\n\"I checked your website and noticed that your business focuses on [specific service]. I think there are some interesting opportunities to improve the way visitors understand your offerings and connect with your brand.\"\r\n\r\n\"I noticed you are building around [specific detail]. I'd love to discuss how we could translate that into a polished website experience.\"\r\n\r\n\r\nRules:\r\n- Never mention HTML.\r\n- Never mention website analysis.\r\n- Never say \"I analyzed your website.\"\r\n- Never invent details.\r\n\r\n\r\n---\r\n\r\nCONSULTATION / SCHEDULING PARAGRAPH\r\n\r\nIf the requested meeting time is available:\r\n\r\nWrite naturally:\r\n\r\n\"Regarding a quick intro call, I’ve scheduled our 30-minute Meet for [date and time] in US Central Time. I’m looking forward to learning more about your goals and discussing some ideas.\"\r\n\r\n\r\nIf the requested time is unavailable:\r\n\r\nExplain politely:\r\n\r\n\"Regarding a quick intro call, the time you requested is not available, but I’d be happy to find another time that works.\"\r\n\r\n\r\nThen provide options in this exact format:\r\n\r\n\r\nWednesday, July 15, 2026 at 10:30 AM CT\r\n\r\nWednesday, July 15, 2026 at 1:00 PM CT\r\n\r\nFriday, July 17, 2026 at 3:00 PM CT\r\n\r\n\r\nRules:\r\n- Use plain text lines.\r\n- No bullet symbols.\r\n- No numbering.\r\n- Leave a blank line between options.\r\n- Always include the timezone (CT).\r\n\r\n\r\nAfter scheduling options, add:\r\n\r\n\"If none of these work, let me know a couple of alternatives and I’ll do my best to accommodate.\"\r\n\r\n\r\n---\r\n\r\nMEETING AGENDA\r\n\r\nWhen a consultation is being scheduled, include a short agenda naturally at the end of the scheduling paragraph.\r\n\r\nUse this style:\r\n\r\n\"The quick agenda for our chat would be: a brief introduction, your main website goals, and a few ideas I have that could help move your project forward.\"\r\n\r\n\r\nThe agenda should always be:\r\n- Short\r\n- Personalized\r\n- Helpful\r\n- Not overly formal\r\n\r\n\r\n---\r\n\r\nCLOSING\r\n\r\nAlways end exactly with:\r\n\r\nBest wishes,\r\n\r\nJohn Michael Ramos\r\n\r\n\r\n\r\nDo not add:\r\n- Phone numbers\r\n- Extra signatures\r\n- Social media links\r\n- Company slogans\r\n\r\n\r\n# EMAIL APPEARANCE RULES\r\n\r\nThe final email should visually resemble a simple professional personal email.\r\n\r\nFormatting:\r\n\r\nUse:\r\n- Short paragraphs\r\n- Natural spacing\r\n- Plain text style inside HTML\r\n\r\nAllowed HTML:\r\n\r\n<p>\r\n<br>\r\n\r\nDo not use:\r\n- Tables\r\n- Cards\r\n- Headers\r\n- Buttons\r\n- Images\r\n- Logos\r\n- Fancy layouts\r\n\r\n\r\n# STYLE REQUIREMENTS\r\n\r\nThe email must feel:\r\n\r\nProfessional:\r\n- Clear\r\n- Competent\r\n- Respectful\r\n\r\nHuman:\r\n- Warm\r\n- Conversational\r\n- Natural\r\n\r\nFreelancer-like:\r\n- Helpful\r\n- Curious about their project\r\n- Focused on understanding their goals\r\n\r\n\r\nAvoid:\r\n\r\n- Corporate language\r\n- Sales pitches\r\n- Over-promising\r\n- Excessive compliments\r\n- Generic AI wording\r\n\r\n\r\n# ABSOLUTE RULES\r\n\r\nNever use:\r\n\r\n- Em dashes (—)\r\n- Bullet points\r\n- Numbered lists\r\n- \"I hope this email finds you well\"\r\n- \"I hope you're doing great\"\r\n- \"Don't hesitate to reach out\"\r\n- \"Please feel free\"\r\n- \"Kindly\"\r\n- \"As per your request\"\r\n\r\nThe email should always feel like John personally wrote it after reading the client's message.",
+                "message": "{{2.task.capturedTexts}}First Name: {{3.`1`}}\nLast Name: {{3.`2`}}\nEmail: {{3.`3`}}\nContact Number: {{3.`4`}}\nWebsite Link: {{3.`5`}}\nInquiry: {{3.`6`}}\nPreffered Date & Time: {{3.`7`}}\nHTML: {{2.task.capturedTexts.HTML}}",
+                "files": [],
+                "threadId": "",
+                "modelConfig": {
+                    "recursionLimit": 300,
+                    "iterationsFromHistoryCount": "10"
+                },
+                "timeout": "",
+                "outputType": "text"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "makeConnectionId": {
+                            "label": "Make's AI Provider (default)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "ai-provider"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "defaultModel": {
+                            "mode": "chose",
+                            "label": "MediumModel: gpt-5-nano. Reasoning: low. A balanced, quick choice for clearly defined tasks needing reliable answers rather than deep analysis"
+                        },
+                        "files": {
+                            "mode": "chose"
+                        },
+                        "outputType": {
+                            "label": "Text"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "makeConnectionId",
+                        "type": "account:ai-provider,openai-gpt-3,anthropic-claude,gemini-ai-q9zyjp,ai-agent-foundry-openai,ai-agent-foundry-non-openai,mistral-ai,cohere,groq,ai-agent-xai,amazon-bedrock,ai-agent-openai-compatible",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "defaultModel",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true
+                    },
+                    {
+                        "name": "systemPrompt",
+                        "type": "text",
+                        "label": "Instructions"
+                    },
+                    {
+                        "name": "message",
+                        "type": "text",
+                        "label": "Input",
+                        "required": true
+                    },
+                    {
+                        "name": "files",
+                        "type": "array",
+                        "label": "Input files",
+                        "spec": [
+                            {
+                                "name": "fileName",
+                                "type": "filename",
+                                "label": "File name",
+                                "semantic": "file:name"
+                            },
+                            {
+                                "name": "data",
+                                "type": "buffer",
+                                "label": "Data",
+                                "semantic": "file:data"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "threadId",
+                        "type": "text",
+                        "label": "Conversation ID",
+                        "validate": {
+                            "max": 256
+                        }
+                    },
+                    {
+                        "name": "modelConfig",
+                        "type": "collection",
+                        "label": "Model configuration",
+                        "spec": [
+                            {
+                                "name": "tokenLimit",
+                                "type": "hidden",
+                                "label": "Max output tokens"
+                            },
+                            {
+                                "name": "recursionLimit",
+                                "type": "hidden",
+                                "label": "Steps per agent call"
+                            },
+                            {
+                                "name": "iterationsFromHistoryCount",
+                                "type": "number",
+                                "label": "Maximum conversation history"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "number",
+                        "label": "Step timeout",
+                        "validate": {
+                            "min": 120,
+                            "max": 600
+                        }
+                    },
+                    {
+                        "name": "outputType",
+                        "type": "select",
+                        "label": "Response format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "text",
+                                "make-schema",
+                                "udt-schema"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "tools": [
+                {
+                    "name": "Get Free/Busy Information",
+                    "description": "Returns free/busy information for a set of calendars.",
+                    "flow": [
+                        {
+                            "id": 5,
+                            "module": "google-calendar:getFreeBusyInformation",
+                            "version": 5,
+                            "parameters": {
+                                "__IMTCONN__": 8976400
+                            },
+                            "mapper": {
+                                "timeMin": "{{4.timeMin}}",
+                                "timeMax": "{{4.timeMax}}",
+                                "item": "{{4.item}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 250
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "label": "My Google connection (ramosjohnmichael61@gmail.com)",
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google"
+                                            }
+                                        }
+                                    },
+                                    "expect": {
+                                        "item": {
+                                            "mode": "edit"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "timeMin",
+                                        "type": "date",
+                                        "label": "Time Range From",
+                                        "required": true,
+                                        "time": true
+                                    },
+                                    {
+                                        "name": "timeMax",
+                                        "type": "date",
+                                        "label": "Time Range To",
+                                        "required": true,
+                                        "time": true
+                                    },
+                                    {
+                                        "name": "item",
+                                        "type": "array",
+                                        "label": "Calendars",
+                                        "required": true,
+                                        "spec": [
+                                            {
+                                                "mode": "edit",
+                                                "name": "id",
+                                                "type": "select",
+                                                "label": "Calendar ID",
+                                                "options": [],
+                                                "required": true,
+                                                "dynamic": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Create an Event",
+                    "description": "Creates a new event.",
+                    "flow": [
+                        {
+                            "id": 7,
+                            "module": "google-calendar:createAnEvent",
+                            "version": 5,
+                            "parameters": {
+                                "__IMTCONN__": 8976400
+                            },
+                            "mapper": {
+                                "select": "detail",
+                                "calendar": "ramosjohnmichael61@gmail.com",
+                                "summary": "{{4.summary}}",
+                                "conferenceDate": "{{4.conferenceDate}}",
+                                "attendees": "{{4.attendees}}",
+                                "allDayEvent": false,
+                                "start": "{{4.start}}",
+                                "end": "{{4.end}}",
+                                "duration": "00:30",
+                                "eventType": "{{4.eventType}}",
+                                "transparency": "opaque",
+                                "visibility": "default",
+                                "guestPermissions": {
+                                    "guestsCanModify": false,
+                                    "guestsCanInviteOthers": true,
+                                    "guestsCanSeeOtherGuests": true
+                                }
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 650
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "label": "My Google connection (ramosjohnmichael61@gmail.com)",
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google"
+                                            }
+                                        }
+                                    },
+                                    "expect": {
+                                        "select": {
+                                            "label": "In Detail"
+                                        },
+                                        "calendar": {
+                                            "mode": "chose",
+                                            "label": "ramosjohnmichael61@gmail.com (Primary Calendar)"
+                                        },
+                                        "conferenceDate": {
+                                            "mode": "edit",
+                                            "extra": {
+                                                "aiHelp": "Not supported for special events, such as `Out of office` and `Focus time`."
+                                            }
+                                        },
+                                        "attendees": {
+                                            "mode": "edit",
+                                            "extra": {
+                                                "aiHelp": "Not supported for special events, such as `Out of office` and `Focus time`."
+                                            }
+                                        },
+                                        "allDayEvent": {
+                                            "mode": "chose"
+                                        },
+                                        "end": {
+                                            "extra": {
+                                                "aiHelp": "You can either enter End Date or Duration."
+                                            }
+                                        },
+                                        "eventType": {
+                                            "mode": "edit",
+                                            "extra": {
+                                                "aiHelp": "**Event Type** is only available for primary calendars. Select when creating a special event, such as `Out of office` or `Focus time`. Otherwise, a standard (default) event will be created. Note that special events are available only on specific Google Workspace plans."
+                                            }
+                                        },
+                                        "colorId": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "overrides": {
+                                            "mode": "chose"
+                                        },
+                                        "transparency": {
+                                            "mode": "chose",
+                                            "label": "Busy"
+                                        },
+                                        "visibility": {
+                                            "mode": "chose",
+                                            "label": "Default"
+                                        },
+                                        "sendUpdates": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "recurrence": {
+                                            "mode": "chose"
+                                        },
+                                        "attachments": {
+                                            "mode": "chose"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "select",
+                                        "type": "select",
+                                        "label": "Create an Event",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "quick",
+                                                "detail"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "calendar",
+                                        "type": "select",
+                                        "label": "Calendar ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "summary",
+                                        "type": "text",
+                                        "label": "Event Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "conferenceDate",
+                                        "type": "boolean",
+                                        "label": "Add Google Meet Video Conferencing",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "attendees",
+                                        "type": "array",
+                                        "label": "Attendees",
+                                        "spec": {
+                                            "spec": [
+                                                {
+                                                    "name": "displayName",
+                                                    "type": "text",
+                                                    "label": "Name"
+                                                },
+                                                {
+                                                    "name": "email",
+                                                    "type": "email",
+                                                    "label": "Email",
+                                                    "required": true
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Attendee",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "allDayEvent",
+                                        "type": "boolean",
+                                        "label": "All Day Event",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "start",
+                                        "type": "date",
+                                        "label": "Start Date",
+                                        "required": true,
+                                        "time": true
+                                    },
+                                    {
+                                        "name": "end",
+                                        "type": "date",
+                                        "label": "End Date",
+                                        "time": true
+                                    },
+                                    {
+                                        "name": "duration",
+                                        "type": "time",
+                                        "label": "Duration"
+                                    },
+                                    {
+                                        "name": "eventType",
+                                        "type": "select",
+                                        "label": "Event Type",
+                                        "validate": {
+                                            "enum": [
+                                                "outOfOffice",
+                                                "focusTime"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "colorId",
+                                        "type": "select",
+                                        "label": "Color"
+                                    },
+                                    {
+                                        "name": "description",
+                                        "type": "text",
+                                        "label": "Description"
+                                    },
+                                    {
+                                        "name": "location",
+                                        "type": "text",
+                                        "label": "Location"
+                                    },
+                                    {
+                                        "name": "useDefault",
+                                        "type": "boolean",
+                                        "label": "Use the default reminder settings for this event"
+                                    },
+                                    {
+                                        "name": "overrides",
+                                        "type": "array",
+                                        "label": "Reminders",
+                                        "validate": {
+                                            "maxItems": 5
+                                        },
+                                        "spec": [
+                                            {
+                                                "name": "method",
+                                                "type": "select",
+                                                "label": "Method",
+                                                "options": [
+                                                    {
+                                                        "label": "Email",
+                                                        "value": "email"
+                                                    },
+                                                    {
+                                                        "label": "Pop-up",
+                                                        "value": "popup"
+                                                    }
+                                                ],
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "minutes",
+                                                "type": "uinteger",
+                                                "label": "Minutes",
+                                                "required": true,
+                                                "validate": {
+                                                    "max": 40320
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "transparency",
+                                        "type": "select",
+                                        "label": "Show me as",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "opaque",
+                                                "transparent"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "visibility",
+                                        "type": "select",
+                                        "label": "Visibility",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "default",
+                                                "public",
+                                                "private"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "sendUpdates",
+                                        "type": "select",
+                                        "label": "Send notifications about the event creation",
+                                        "validate": {
+                                            "enum": [
+                                                "all",
+                                                "externalOnly",
+                                                "none"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "guestPermissions",
+                                        "type": "collection",
+                                        "label": "Guest Permissions",
+                                        "spec": [
+                                            {
+                                                "name": "guestsCanModify",
+                                                "type": "boolean",
+                                                "label": "Modify event",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "guestsCanInviteOthers",
+                                                "type": "boolean",
+                                                "label": "Invite others",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "guestsCanSeeOtherGuests",
+                                                "type": "boolean",
+                                                "label": "See guest list",
+                                                "required": true
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "recurrence",
+                                        "type": "array",
+                                        "label": "Recurrence",
+                                        "spec": {
+                                            "type": "text",
+                                            "label": "Value",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "attachments",
+                                        "type": "array",
+                                        "label": "Attachments",
+                                        "spec": [
+                                            {
+                                                "name": "fileUrl",
+                                                "type": "url",
+                                                "label": "File URL",
+                                                "required": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Send an email",
+                    "description": "Sends a new email.",
+                    "flow": [
+                        {
+                            "id": 8,
+                            "module": "google-email:sendAnEmail",
+                            "version": 4,
+                            "parameters": {
+                                "__IMTCONN__": 8998983
+                            },
+                            "mapper": {
+                                "to": "{{4.to}}",
+                                "subject": "{{4.subject}}",
+                                "bodyType": "rawHtml",
+                                "attachments": "{{4.attachments}}",
+                                "content": "{{4.content}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 900
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "label": "My Gmail connection (ramosjohnmichael61@gmail.com)",
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google-email"
+                                            }
+                                        }
+                                    },
+                                    "expect": {
+                                        "to": {
+                                            "mode": "edit",
+                                            "extra": {
+                                                "aiHelp": "Enter a recipient email address."
+                                            }
+                                        },
+                                        "bodyType": {
+                                            "label": "Raw HTML"
+                                        },
+                                        "attachments": {
+                                            "mode": "edit"
+                                        },
+                                        "from": {
+                                            "mode": "chose"
+                                        },
+                                        "cc": {
+                                            "mode": "chose"
+                                        },
+                                        "bcc": {
+                                            "mode": "chose"
+                                        },
+                                        "emailHeaders": {
+                                            "mode": "chose"
+                                        },
+                                        "content": {
+                                            "extra": {
+                                                "aiHelp": "You can use complete HTML code."
+                                            }
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google-email",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "to",
+                                        "type": "array",
+                                        "label": "To",
+                                        "required": true,
+                                        "spec": {
+                                            "type": "email",
+                                            "label": "Recipient email address",
+                                            "required": true,
+                                            "validate": true,
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "subject",
+                                        "type": "text",
+                                        "label": "Subject"
+                                    },
+                                    {
+                                        "name": "bodyType",
+                                        "type": "select",
+                                        "label": "Body type",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "rawHtml",
+                                                "collection"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "attachments",
+                                        "type": "array",
+                                        "label": "Attachments",
+                                        "spec": {
+                                            "spec": [
+                                                {
+                                                    "name": "filename",
+                                                    "type": "filename",
+                                                    "label": "File name",
+                                                    "required": true,
+                                                    "semantic": "file:name"
+                                                },
+                                                {
+                                                    "name": "data",
+                                                    "type": "buffer",
+                                                    "label": "Data",
+                                                    "required": true,
+                                                    "semantic": "file:data"
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Attachment",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "from",
+                                        "type": "select",
+                                        "label": "From"
+                                    },
+                                    {
+                                        "name": "cc",
+                                        "type": "array",
+                                        "label": "CC recipients",
+                                        "spec": {
+                                            "type": "email",
+                                            "label": "Recipient email address",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "bcc",
+                                        "type": "array",
+                                        "label": "BCC recipients",
+                                        "spec": {
+                                            "type": "email",
+                                            "label": "Recipient email address",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "emailHeaders",
+                                        "type": "array",
+                                        "label": "Additional email headers",
+                                        "spec": {
+                                            "spec": [
+                                                {
+                                                    "name": "key",
+                                                    "type": "text",
+                                                    "label": "Key",
+                                                    "required": true
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Email header",
+                                            "name": "value"
+                                        }
+                                    },
+                                    {
+                                        "name": "content",
+                                        "type": "text",
+                                        "label": "Content"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
