@@ -1,0 +1,293 @@
+{
+  "name": "day13-content-repurpose",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "686777da-be49-4dcc-b68c-7722fe9062f0",
+      "name": "On clicking 'Test workflow'"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a social media copywriter. Reply with ONLY a valid JSON object (no markdown, no commentary) using exactly these keys: title (string), hook (string, one attention-grabbing opening line), twitter_caption (string, under 280 characters), linkedin_caption (string, 3-5 sentences, professional tone), instagram_caption (string, casual tone with 1-2 emoji), hashtags plus add a # in front (array of strings).\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ (\"Repurpose this source content for social media. Source:\\n\\n\" + $json.choices[0].message.content).toJsonString() }}\n    }\n  ],\n  \"response_format\": { \"type\": \"json_object\" }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        496,
+        0
+      ],
+      "id": "3e9c7633-f85a-4093-99e9-ce234403d5e8",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yEuFXlUwRpvJl9V3",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Safe JSON Parsing\nlet c = {};\ntry {\n  // If the LLM returned markdown blocks like ```json ... ```, strip them out first\n  const rawContent = $json.choices[0].message.content.replace(/```json|```/g, '').trim();\n  c = JSON.parse(rawContent);\n} catch (e) {\n  throw new Error(\"Failed to parse LLM response. The returned content was not valid JSON: \" + e.message);\n}\n\n// 2. Safely capture the previous node source text (using .first() is safer in Code nodes)\nlet sourceText = \"\";\ntry {\n  sourceText = $('Set Input').first().json.source_text || \"\";\n} catch (e) {\n  // Fallback if 'Set Input' node isn't directly reachable or has a different structure\n  sourceText = \"\";\n}\n\n// 3. Map the fields safely\nreturn { \n  json: {\n    title: c.title || \"\",\n    hook: c.hook || \"\",\n    twitter_caption: c.twitter_caption || \"\",\n    linkedin_caption: c.linkedin_caption || \"\",\n    instagram_caption: c.instagram_caption || \"\",\n    // If hashtags is already a string, keep it; if array, join it; otherwise fallback to empty string\n    hashtags: Array.isArray(c.hashtags) \n      ? c.hashtags.join(' ') \n      : (c.hashtags || \"\"),\n    source_preview: sourceText.slice(0, 100),\n    status: 'ready',\n    created_at: $now.toISO()\n  } \n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "776468ae-ab02-4d19-b629-04bbe2949322",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mdugjBrtJkSGNz77M9R3WMWOW0c9UwZHJWVNu6Gxipo",
+          "mode": "list",
+          "cachedResultName": "content-queue",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mdugjBrtJkSGNz77M9R3WMWOW0c9UwZHJWVNu6Gxipo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mdugjBrtJkSGNz77M9R3WMWOW0c9UwZHJWVNu6Gxipo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "source_preview": "={{ $('For Automating Source Text').item.json.choices[0].message.content }}",
+            "title": "={{ $json.title }}",
+            "hook": "={{ $json.hook }}",
+            "twitter_caption": "={{ $json.twitter_caption }}",
+            "linkedin_caption": "={{ $json.linkedin_caption }}",
+            "instagram_caption": "={{ $json.instagram_caption }}",
+            "hashtags": "={{ $json.hashtags }}",
+            "status": "={{ $json.status }}",
+            "created_at": "={{ $json.created_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "source_preview",
+              "displayName": "source_preview",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hook",
+              "displayName": "hook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "twitter_caption",
+              "displayName": "twitter_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_caption",
+              "displayName": "linkedin_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagram_caption",
+              "displayName": "instagram_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hashtags",
+              "displayName": "hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        0
+      ],
+      "id": "74cffe7a-6b03-4ebd-8841-757d0a8c2552",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"Write a 200-word first-person post in my voice about a lesson I learned working with data or building automations. Grounded, specific, no hype, no emoji. Return only the post text.\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        0
+      ],
+      "id": "424fcbe1-3131-4faa-8e7b-0d507e5a5b3f",
+      "name": "For Automating Source Text",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yEuFXlUwRpvJl9V3",
+          "name": "Groq API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "For Automating Source Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "For Automating Source Text": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d47605ee-6976-4b18-ae9f-4e06b348b5a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e904d1734ebbf993bd808e0e0345a75a5fca630950f5c4a6c27501a0190e5a51"
+  },
+  "nodeGroups": [],
+  "id": "5r433E5pxOI8cJqr",
+  "tags": []
+}
