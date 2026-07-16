@@ -9,5 +9,6 @@
 ## Time saved
 - ______
 
+
 ## Hypothesis
 - I will automate the handoff from inbound inquiries into a structured lead list so no new opportunity gets missed.
