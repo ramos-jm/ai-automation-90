@@ -1,0 +1,363 @@
+{
+  "name": "day17-file-report",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1Aq4jUzJzCh9qXW60xaA3Gke2KfjAOk1s",
+          "mode": "list",
+          "cachedResultName": "day17-inbox",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Aq4jUzJzCh9qXW60xaA3Gke2KfjAOk1s"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "62d7a26f-9331-4404-b84d-7869e04ec35d",
+      "name": "day17-file-report",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "qQMls5vT6jBiJ5pf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{$json.id}}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "798714d8-8a95-4536-b93f-1a25a84c0a51",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "qQMls5vT6jBiJ5pf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "83b0d4b8-0385-4e7a-9a8f-de3300cf0fc5",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    { \n      \"role\": \"system\", \n      \"content\": \"You turn raw notes into a structured report. Reply with ONLY a valid JSON object (no markdown, no commentary) using exactly these keys: overview (string, 2-3 sentence overview), key_findings (array of strings), action_items (array of strings).\" \n    },\n    { \n      \"role\": \"user\", \n      \"content\": \"Turn these raw notes into a structured report. Notes:\\n\\n\" + $json.text \n    }\n  ],\n  \"response_format\": { \"type\": \"json_object\" }\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "da87ae15-9a10-40ea-a405-e9788e49d2be",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yEuFXlUwRpvJl9V3",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bfabb9bd-ff19-46f7-9a92-b268a0e5f49a",
+              "name": "filename",
+              "value": "={{$('day17-file-report').item.json.name}} ",
+              "type": "string"
+            },
+            {
+              "id": "f2040807-0df1-4362-a4c9-edfd2e2acbe1",
+              "name": "overview",
+              "value": "={{JSON.parse($json.choices[0].message.content).overview}}",
+              "type": "string"
+            },
+            {
+              "id": "fa5d4366-4b7b-44ad-ae5d-3124e055513a",
+              "name": "key_findings",
+              "value": "={{ JSON.parse($json.choices[0].message.content).key_findings.join(' | ') }}",
+              "type": "string"
+            },
+            {
+              "id": "5c393586-c03f-4cf3-9f99-b01814928675",
+              "name": "action_items",
+              "value": "={{ JSON.parse($json.choices[0].message.content).action_items.join(' | ') }}",
+              "type": "string"
+            },
+            {
+              "id": "356a71e9-6b91-4571-97f6-733e73c0dc09",
+              "name": "created_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "16647e44-a0a6-47ec-bbe7-bb8681d543a2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19St7dGd6Zmxjmk1afTqDjarJpYpGx4czc7cu-l4KLnU",
+          "mode": "list",
+          "cachedResultName": "reports",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19St7dGd6Zmxjmk1afTqDjarJpYpGx4czc7cu-l4KLnU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19St7dGd6Zmxjmk1afTqDjarJpYpGx4czc7cu-l4KLnU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "filename": "={{ $json.filename }}",
+            "overview": "={{ $json.overview }}",
+            "key_findings": "={{ $json.key_findings }}",
+            "action_items": "={{ $json.action_items }}",
+            "created_at": "={{ $json.created_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "overview",
+              "displayName": "overview",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "key_findings",
+              "displayName": "key_findings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "action_items",
+              "displayName": "action_items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "eabae26e-6c54-4eb4-af45-da255ab0e018",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ramosjohnmichael61@gmail.com",
+        "subject": "=Report Ready:  {{ $json.filename }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Meeting Report</title>\n<style>\nbody { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; background-color: #f9fafb; }\n.container { max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }\nh2 { color: #111827; font-size: 18px; font-weight: 600; margin-top: 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }\nh3 { color: #4b5563; font-size: 13px; margin-bottom: 8px; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }\np { margin-top: 0; color: #374151; font-size: 14px; }\n.item-list { padding: 0; margin: 0; list-style-type: none; }\n.finding-item { padding: 10px 14px; background: #f8fafc; border-left: 4px solid #64748b; border-radius: 0 4px 4px 0; margin-bottom: 8px; font-size: 14px; color: #374151; }\n.action-item { padding: 10px 14px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 4px 4px 0; margin-bottom: 8px; font-size: 14px; color: #374151; }\n.footer { margin-top: 32px; font-size: 11px; color: #9ca3af; text-align: center; border-top: 1px solid #f3f4f6; padding-top: 16px; letter-spacing: 0.02em; }\n</style>\n</head>\n<body>\n<div class=\"container\">\n<h2>Structured Notes Report</h2>\n\n<h3>Overview</h3>\n<p>{{ $json.overview }}</p>\n\n<h3>Key Findings</h3>\n<ul class=\"item-list\">\n{{ $json.key_findings.split(' | ').map(finding => `<li class=\"finding-item\">${finding}</li>`).join('') }}\n</ul>\n\n<h3>Action Items</h3>\n<ul class=\"item-list\">\n{{ $json.action_items.split(' | ').map(action => `<li class=\"action-item\">${action}</li>`).join('') }}\n</ul>\n</div>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "a2b10dac-038e-465a-9942-012254391c71",
+      "name": "Send a message",
+      "webhookId": "1e68df3a-e96e-4f34-b087-c7a6c78122fd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hS2j80w6Iq4jPPMX",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "day17-file-report": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "be77102c-e171-4242-bab7-a042d62d228c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e904d1734ebbf993bd808e0e0345a75a5fca630950f5c4a6c27501a0190e5a51"
+  },
+  "nodeGroups": [],
+  "id": "hWdRvQS52fcoIxXY",
+  "tags": []
+}
