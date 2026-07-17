@@ -1,0 +1,360 @@
+{
+  "name": "day15-lead-capture",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "day15-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5a831d46-2fad-4e78-8e31-aa205a58f192",
+      "name": "Webhook",
+      "webhookId": "e176cf30-d4eb-4451-a515-01629a39b6ca"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    { \"role\": \"system\", \"content\": \"You qualify sales leads. Reply with ONLY a valid JSON object (no markdown, no commentary) using exactly these keys: qualification (string, one of: hot, warm, or cold), priority (string, one of: high, medium, or low), summary (string, one sentence).\" },\n    { \"role\": \"user\", \"content\": \"Qualify this sales lead. Name: {{ $json.body.name }}. Company: {{ $json.body.company }}. Message: {{ $json.body.message }}.\" }\n  ],\n  \"response_format\": { \"type\": \"json_object\" }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "eaa88ddd-4777-4a1b-bee7-9297855770fb",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yEuFXlUwRpvJl9V3",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1g1nxS-quHpo3NaeTvfWryXyp3EBuCVFbuOFq42icjmE",
+          "mode": "list",
+          "cachedResultName": "leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g1nxS-quHpo3NaeTvfWryXyp3EBuCVFbuOFq42icjmE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g1nxS-quHpo3NaeTvfWryXyp3EBuCVFbuOFq42icjmE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "company": "={{ $json.company }}",
+            "email": "={{ $json.email }}",
+            "message": "={{ $json.message }}",
+            "qualification": "={{ $json.qualification }}",
+            "priority": "={{ $json.priority }}",
+            "summary": "={{ $json.summary }}",
+            "created_at": "={{ $json.created_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "qualification",
+              "displayName": "qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "e88dc05d-822b-4c33-aac1-882b29756794",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XBKAUj8Jj4v8dDJW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"received\",\n  \"qualification\": \"{{ $json.qualification }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1296,
+        -16
+      ],
+      "id": "c74a1847-4766-42c6-a2e5-e9657a278abe",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "64290729-ff36-446d-a1d4-9e2784cc1e4c",
+              "leftValue": "={{ $json.qualification }}",
+              "rightValue": "hot",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "55751f0f-cfe4-4498-9ce7-8198b934b2a2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "ramosjohnmichael61@gmail.com",
+        "subject": "=🔥 Hot lead:  {{ $json.name }}",
+        "message": "={{ $json.summary }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        -16
+      ],
+      "id": "2696013d-eb10-4cc8-8f07-19225ce13522",
+      "name": "Send a message",
+      "webhookId": "c6540337-f58e-4d63-89a1-89d7c3339b31",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hS2j80w6Iq4jPPMX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const c = JSON.parse($json.choices[0].message.content);\nreturn { json: {\n  name: $('Webhook').item.json.body.name,\n  email: $('Webhook').item.json.body.email,\n  company: $('Webhook').item.json.body.company,\n  message: $('Webhook').item.json.body.message,\n  qualification: c.qualification,\n  priority: c.priority,\n  summary: c.summary,\n  created_at: $now.toISO()\n} };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f4d1ae6f-5533-475e-8607-ee3953a3b4f2",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "af1a0fbb-2547-44f8-b68f-fdb47c80b660",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e904d1734ebbf993bd808e0e0345a75a5fca630950f5c4a6c27501a0190e5a51"
+  },
+  "nodeGroups": [],
+  "id": "5tTKmKAZ24W8Rcgq",
+  "tags": []
+}
